@@ -1,3 +1,10 @@
+# Introduction
+
+Decided to make my studietid application in nuxt.js as doing a backend + frontend seperately just overcomplicated things.
+
+This will be the final product for my school.
+
+
 # Nuxt Minimal Starter
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
