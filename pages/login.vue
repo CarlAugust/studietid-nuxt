@@ -21,11 +21,9 @@ const login = async () =>
     }
 
 }
-
-console.log("Hello, world");
 </script>
 <template>
-  <div class="flex h-screen items-center justify-center mb-82">
+  <div class="flex h-screen items-center justify-center">
     <div class="bg-white bg-opacity-80 backdrop-blur-md rounded-2xl px-6 py-3 shadow-lg max-w-md mx-auto transition-all duration-300 hover:shadow-xl hover:bg-opacity-90">
         <div class="mb-1.5">
           <label class="block text-gray-700" for="username">
