@@ -1,30 +1,43 @@
 import { z } from "zod";
+import { getUser } from "~/utils/sql";
 
 const bodySchema = z.object({
-    username: z.string(),
+    email: z.string(),
     password: z.string().min(8)
 });
 
 export default defineEventHandler(async (event) => {
     const body = await readValidatedBody(event, bodySchema.parse);
 
-    if (!body.username || !body.password) {
+    if (!body.email || !body.password) {
         return {
             status: 400,
             message: 'Username and password are required.',
         };
     }
 
-    // Example: Replace this with your actual authentication logic
-    if (body.username === 'admin' && body.password === 'password') {
-        
+    const user = getUser(body.email);
+
+    if (!user)
+    {
+        throw createError({
+            status: 401,
+            message: 'user does not exist'
+        });
+    }
+
+    if (body.password === user.password) {
         await setUserSession(event,
         {
             user: {
-                name: "Dude"
+                idUser: user.idUser,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                idRole: user.idRole,
+                email: user.email
             }
         });
-        return {}
+        return {};
     }
     throw createError({
         status: 401,

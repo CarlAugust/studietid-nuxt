@@ -10,7 +10,7 @@ const login = async () =>
 {
 
     try {
-        const response = await fetch("/login", {
+        const response = await fetch("/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData),

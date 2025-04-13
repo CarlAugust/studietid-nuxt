@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import fs from 'fs/promises';
 const db = new Database('database/database.db');
-import * as sqlType from '~/server/types/sql-types';
+import * as sqlType from '~/utils/sql-types';
 
 
 
@@ -21,17 +21,24 @@ export async function initializeDatabase()
     }
 }
 
-export function getUser(email: string)
+interface getUserType
 {
-    let sql = db.prepare(
-        `SELECT user.id as userID, user.firstName, user.lastName, role.id as roleID, role.name as role, user.email
+    idUser: number;
+    firstName: string;
+    lastName: string;
+    password: string;
+    idRole: number;
+    email: string;
+}
+export function getUser(email: string): getUserType
+{
+    const sql = db.prepare(
+        `SELECT user.id as idUser, user.firstName, user.lastName, role.id as idRole, user.email, user.password
         FROM user
         inner join role on user.idRole = role.id
         WHERE user.email = ?`);
 
-    let rows = sql.all(email);
-
-    return rows[0];
+    return sql.get(email) as getUserType;
 }
 
 export function getUserId(email: string)
@@ -160,9 +167,9 @@ function addClass(name: String)
 function addSubjectClass(subjectClass: sqlType.SubjectClass)
 {
     const {idSubject, idClass} = subjectClass;
-    const existingItem = db.prepare(`SELECT idSubject FROM subject_class WHERE idSubject = ? AND idClass = ?`).all(idSubject, idClass);
+    const existingItem = db.prepare(`SELECT idSubject FROM subject_class WHERE idSubject = ? AND idClass = ?`).get(idSubject, idClass) as sqlType.Id;
 
-    if (existingItem.length > 0)
+    if (existingItem)
     {
         return existingItem.id;
     }
@@ -176,29 +183,29 @@ function addSubjectClass(subjectClass: sqlType.SubjectClass)
 // Here are all the delete related functions
 //------------------------------------------------//
 
-export function deleteUser(email: string)
-{   
-    let row = getUserId(email) as sqlType.Id;
+// export function deleteUser(email: string)
+// {   
+//     let row = getUserId(email) as sqlType.Id;
 
-    // To anonymize the data we change the idUser to 1, which is the root user
-    let sql = db.prepare(`UPDATE activity SET idUser = 1 WHERE idUser = ?`);
-    sql.run(row.userID);
+//     // To anonymize the data we change the idUser to 1, which is the root user
+//     let sql = db.prepare(`UPDATE activity SET idUser = 1 WHERE idUser = ?`);
+//     sql.run(row.userID);
 
-    sql = db.prepare(`DELETE FROM user WHERE id = ?`);
-    sql.run(row.userID);
-}
+//     sql = db.prepare(`DELETE FROM user WHERE id = ?`);
+//     sql.run(row.userID);
+// }
 
-export function deleteSubject(name)
-{
-    let sql = db.prepare(`DELETE FROM subject WHERE name = ?`);
-    sql.run(name);
-}
+// export function deleteSubject(name)
+// {
+//     let sql = db.prepare(`DELETE FROM subject WHERE name = ?`);
+//     sql.run(name);
+// }
 
-export function deleteRoom(name)
-{
-    let sql = db.prepare(`DELETE FROM room WHERE name = ?`);
-    sql.run(name);
-}
+// export function deleteRoom(name)
+// {
+//     let sql = db.prepare(`DELETE FROM room WHERE name = ?`);
+//     sql.run(name);
+// }
 
 // export function getAllActivities(): sqlType.Activity[]
 // {
